@@ -9,13 +9,29 @@
   }
 
   /* Hide all elements by default */
-  * {
-    display: none !important;
+  body * {
+    visibility: hidden;
   }
 
-  /* Show only the receipt container */
-  .print-container,
+  /* Show receipt and its children */
+  .print-container {
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
   .print-container * {
+    visibility: visible;
+  }
+
+  /* Ensure all grid and layout elements work */
+  .print-container div,
+  .print-container img,
+  .print-container h1,
+  .print-container p,
+  .print-container span {
     display: block !important;
     visibility: visible !important;
   }
@@ -38,5 +54,7 @@
   html, body {
     margin: 0;
     padding: 0;
+    width: 100%;
+    height: 100%;
   }
 }
