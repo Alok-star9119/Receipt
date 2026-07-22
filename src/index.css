@@ -1,60 +1,93 @@
 @import "tailwindcss";
 
-/* Print Styles - Hide non-receipt elements */
+/* Print Styles - Optimize for printing */
 @media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   body {
     background: white;
     margin: 0;
     padding: 0;
-  }
-
-  /* Hide all elements by default */
-  body * {
-    visibility: hidden;
-  }
-
-  /* Show receipt and its children */
-  .print-container {
-    visibility: visible;
-    position: absolute;
-    left: 0;
-    top: 0;
     width: 100%;
+    min-height: 100%;
   }
 
-  .print-container * {
-    visibility: visible;
-  }
-
-  /* Ensure all grid and layout elements work */
-  .print-container div,
-  .print-container img,
-  .print-container h1,
-  .print-container p,
-  .print-container span {
-    display: block !important;
-    visibility: visible !important;
-  }
-
-  /* Remove margins and padding for printing */
-  .print-container {
-    margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    page-break-after: avoid;
-  }
-
-  /* Optimize for printing */
-  @page {
-    margin: 5mm;
-    size: A4;
-  }
-
-  html, body {
+  html {
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
+  }
+
+  /* Hide all non-print elements */
+  body > * {
+    display: none !important;
+  }
+
+  /* Show only receipt container */
+  .print-container {
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    overflow: visible !important;
+    background: white !important;
+    border: none !important;
+  }
+
+  /* Ensure all print container children are visible */
+  .print-container * {
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important;
+  }
+
+  /* Fix grid layouts for print */
+  .print-container .grid {
+    display: grid !important;
+    width: 100% !important;
+  }
+
+  /* Remove responsive sizing for print */
+  .print-container h1 {
+    font-size: 18pt !important;
+  }
+
+  .print-container p {
+    font-size: 10pt !important;
+  }
+
+  /* Configure A4 page */
+  @page {
+    size: A4;
+    margin: 8mm;
+  }
+
+  /* Remove all media query responsive behavior */
+  .md\:p-7 {
+    padding: 1rem !important;
+  }
+
+  .md\:text-2xl {
+    font-size: 16pt !important;
+  }
+
+  .md\:text-sm {
+    font-size: 10pt !important;
+  }
+
+  .md\:w-20 {
+    width: 3rem !important;
+    height: 3rem !important;
   }
 }
