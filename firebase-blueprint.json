@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "receipts": {
+      "title": "Receipt",
+      "description": "Fee receipt records for GPLR School",
+      "type": "object",
+      "properties": {
+        "receiptNo": { "type": "number", "description": "Sequential receipt number" },
+        "date": { "type": "string", "description": "Date formatted DD-MM-YYYY" },
+        "studentId": { "type": "string", "description": "Student ID" },
+        "student": { "type": "string", "description": "Student Name" },
+        "parent": { "type": "string", "description": "Parent Name" },
+        "class": { "type": "string", "description": "Class name" },
+        "mode": { "type": "string", "description": "Payment mode" },
+        "total": { "type": "number", "description": "Total receipt amount" },
+        "items": { "type": "array", "description": "List of fee items" },
+        "createdAt": { "type": "string", "description": "Timestamp" }
+      },
+      "required": ["date", "student", "class", "total", "items"]
+    },
+    "concessions": {
+      "title": "Concession",
+      "description": "Permanent discount settings per student and class",
+      "type": "object",
+      "properties": {
+        "studentKey": { "type": "string", "description": "Class and student identifier" },
+        "particular": { "type": "string", "description": "Fee item name" },
+        "type": { "type": "string", "description": "percent or flat" },
+        "value": { "type": "number", "description": "Discount value" },
+        "updatedAt": { "type": "string", "description": "Timestamp" }
+      },
+      "required": ["studentKey", "particular", "type", "value"]
+    },
+    "counters": {
+      "title": "Counter",
+      "description": "Global counters for receipt numbering",
+      "type": "object",
+      "properties": {
+        "nextReceiptNo": { "type": "number", "description": "Next receipt sequence number" }
+      }
+    }
+  }
+}

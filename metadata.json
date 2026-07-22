@@ -1,0 +1,6 @@
+{
+  "name": "GPLR School Fee Ledger",
+  "description": "Fee receipt and ledger management system for Gaya Prasad Lokai Ram School with Google Cloud database integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
