@@ -106,7 +106,7 @@
         </div>
 
         <!-- Receipt Preview Section -->
-        <div class="print-container bg-white receipt-border shadow-2xl mx-auto" style="width: 100%; max-width: 800px;">
+        <div class="print-container bg-white receipt-border shadow-2xl mx-auto" style="width: 100%; max-width: 900px;">
             <!-- Header -->
             <div class="p-4 flex flex-col items-center border-b-2 border-black">
                 <!-- Logo -->
@@ -132,12 +132,13 @@
             </div>
 
             <!-- Table Header -->
-            <div class="grid grid-cols-12 border-b border-black font-bold text-center bg-gray-50">
+            <div class="grid grid-cols-14 border-b border-black font-bold text-center bg-gray-50 text-xs">
                 <div class="col-span-1 border-r border-black p-1">No</div>
                 <div class="col-span-1 border-r border-black p-1">Due For</div>
                 <div class="col-span-2 border-r border-black p-1">Installment</div>
-                <div class="col-span-4 border-r border-black p-1">Particulars</div>
+                <div class="col-span-3 border-r border-black p-1">Particulars</div>
                 <div class="col-span-2 border-r border-black p-1">Transport</div>
+                <div class="col-span-2 border-r border-black p-1">T-Shirt</div>
                 <div class="col-span-2 p-1">Amount</div>
             </div>
 
@@ -147,12 +148,12 @@
             </div>
 
             <!-- Footer / Total -->
-            <div class="grid grid-cols-12 border-t-2 border-black font-bold">
-                <div class="col-span-8 p-2 border-r border-black flex gap-2">
+            <div class="grid grid-cols-14 border-t-2 border-black font-bold text-xs">
+                <div class="col-span-7 p-2 border-r border-black flex gap-2">
                     <span>Rupees in words:</span>
                     <span id="view-words" class="capitalize font-normal">Fifteen Hundred Rupee only</span>
                 </div>
-                <div class="col-span-2 p-2 border-r border-black text-center">Total</div>
+                <div class="col-span-3 p-2 border-r border-black text-center">Total</div>
                 <div class="col-span-2 p-2 text-right px-4" id="view-total">1500</div>
             </div>
 
@@ -191,9 +192,9 @@
 
     <script>
         let feeItems = [
-            { id: 1, month: 'NOV', particular: 'Tution Fee', transport: 0, amount: 500 },
-            { id: 2, month: 'DEC', particular: 'Tution Fee', transport: 0, amount: 500 },
-            { id: 3, month: 'JAN', particular: 'Tution Fee', transport: 0, amount: 500 }
+            { id: 1, month: 'NOV', particular: 'Tution Fee', transport: 0, tshirt: 0, amount: 500 },
+            { id: 2, month: 'DEC', particular: 'Tution Fee', transport: 0, tshirt: 0, amount: 500 },
+            { id: 3, month: 'JAN', particular: 'Tution Fee', transport: 0, tshirt: 0, amount: 500 }
         ];
 
         let history = JSON.parse(localStorage.getItem('receipt_history')) || [];
@@ -224,6 +225,7 @@
                 month: nextMonth,
                 particular: 'Tution Fee',
                 transport: 0,
+                tshirt: 0,
                 amount: 0
             });
             renderFeeRows();
@@ -237,7 +239,7 @@
         function updateFee(id, field, value) {
             const item = feeItems.find(i => i.id === id);
             if (item) {
-                item[field] = (field === 'amount' || field === 'transport') ? parseFloat(value) || 0 : value;
+                item[field] = (field === 'amount' || field === 'transport' || field === 'tshirt') ? parseFloat(value) || 0 : value;
                 renderFeeRows(false); // Don't re-render inputs to avoid focus loss
                 syncCalculations();
             }
@@ -249,12 +251,13 @@
             
             if (reRenderInputs) {
                 container.innerHTML = feeItems.map(item => `
-                    <div class="flex gap-2 items-center bg-gray-50 p-2 rounded border">
-                        <select onchange="updateFee(${item.id}, 'month', this.value)" class="p-1 border rounded text-xs">
+                    <div class="flex gap-2 items-center bg-gray-50 p-2 rounded border text-sm">
+                        <select onchange="updateFee(${item.id}, 'month', this.value)" class="p-1 border rounded text-xs w-16">
                             ${months.map(m => `<option value="${m}" ${item.month === m ? 'selected' : ''}>${m}</option>`).join('')}
                         </select>
                         <input type="text" value="${item.particular}" oninput="updateFee(${item.id}, 'particular', this.value)" placeholder="Particulars" class="flex-grow p-1 border rounded text-sm">
-                        <input type="number" value="${item.transport}" oninput="updateFee(${item.id}, 'transport', this.value)" placeholder="Transport" class="w-20 p-1 border rounded text-sm">
+                        <input type="number" value="${item.transport}" oninput="updateFee(${item.id}, 'transport', this.value)" placeholder="Transport" class="w-20 p-1 border rounded text-sm" title="Transport Fee">
+                        <input type="number" value="${item.tshirt}" oninput="updateFee(${item.id}, 'tshirt', this.value)" placeholder="T-Shirt" class="w-20 p-1 border rounded text-sm" title="T-Shirt Fee">
                         <input type="number" value="${item.amount}" oninput="updateFee(${item.id}, 'amount', this.value)" placeholder="Amt" class="w-20 p-1 border rounded text-sm">
                         <button onclick="removeFeeRow(${item.id})" class="text-red-500 font-bold px-2">×</button>
                     </div>
@@ -262,13 +265,14 @@
             }
 
             receiptBody.innerHTML = feeItems.map((item, index) => `
-                <div class="grid grid-cols-12 border-b border-black text-center min-h-[32px]">
+                <div class="grid grid-cols-14 border-b border-black text-center min-h-[32px] text-xs">
                     <div class="col-span-1 border-r border-black p-1">${index + 1}</div>
                     <div class="col-span-1 border-r border-black p-1"></div>
                     <div class="col-span-2 border-r border-black p-1 font-semibold">${item.month}</div>
-                    <div class="col-span-4 border-r border-black p-1 text-left px-4">${item.particular}</div>
-                    <div class="col-span-2 border-r border-black p-1 text-right px-4 font-semibold">${item.transport}</div>
-                    <div class="col-span-2 p-1 text-right px-4 font-semibold">${item.amount}</div>
+                    <div class="col-span-3 border-r border-black p-1 text-left px-2">${item.particular}</div>
+                    <div class="col-span-2 border-r border-black p-1 text-right px-2 font-semibold">${item.transport}</div>
+                    <div class="col-span-2 border-r border-black p-1 text-right px-2 font-semibold">${item.tshirt}</div>
+                    <div class="col-span-2 p-1 text-right px-2 font-semibold">${item.amount}</div>
                 </div>
             `).join('');
 
@@ -276,11 +280,12 @@
             const fillerCount = Math.max(0, 5 - feeItems.length);
             for(let i=0; i<fillerCount; i++) {
                 receiptBody.innerHTML += `
-                    <div class="grid grid-cols-12 border-b border-black min-h-[32px]">
+                    <div class="grid grid-cols-14 border-b border-black min-h-[32px]">
                         <div class="col-span-1 border-r border-black"></div>
                         <div class="col-span-1 border-r border-black"></div>
                         <div class="col-span-2 border-r border-black"></div>
-                        <div class="col-span-4 border-r border-black"></div>
+                        <div class="col-span-3 border-r border-black"></div>
+                        <div class="col-span-2 border-r border-black"></div>
                         <div class="col-span-2 border-r border-black"></div>
                         <div class="col-span-2"></div>
                     </div>
@@ -297,7 +302,7 @@
         }
 
         function syncCalculations() {
-            const total = feeItems.reduce((sum, item) => sum + item.amount + item.transport, 0);
+            const total = feeItems.reduce((sum, item) => sum + item.amount + item.transport + item.tshirt, 0);
             document.getElementById('view-total').innerText = total;
             document.getElementById('view-words').innerText = numberToWords(total) + " Rupee only";
         }
@@ -381,7 +386,7 @@
             csvContent += "Date,Student Name,Parent Name,Class,Total Amount,Particulars\n";
 
             history.forEach(rec => {
-                const particulars = rec.items.map(i => `${i.month}:${i.particular}(Tuition:${i.amount},Transport:${i.transport})`).join(' | ');
+                const particulars = rec.items.map(i => `${i.month}:${i.particular}(Tuition:${i.amount},Transport:${i.transport},T-Shirt:${i.tshirt})`).join(' | ');
                 const row = [
                     rec.date,
                     `"${rec.student}"`,
