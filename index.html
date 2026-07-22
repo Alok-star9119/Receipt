@@ -57,18 +57,18 @@
         <!-- Controls Section -->
         <div class="no-print bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <div class="flex items-center gap-4 mb-4">
-                <img src="C:\Users\KRAZY KIDS-08\OneDrive\Desktop\GPLR School\Operations\School Decor\School Logo\Final Logo - W Bacground.png" alt="Logo" class="w-12 h-12 rounded-full border border-gray-200 shadow-sm" onerror="this.style.display='none'">
+                <img src="C:\Users\KRAZY KIDS-08\OneDrive\Desktop\GPLR School\Operations\School Decor\School Logo\Final Logo - W Bacground.png" alt="Logo" class="w-12 h-12 rounded-full border border-gray-200">
                 <h2 class="text-xl font-bold text-gray-800">Receipt Controls</h2>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Student Name</label>
-                    <input type="text" id="ctrl-student" placeholder="Enter Name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500" oninput="syncFields()">
+                    <input type="text" id="ctrl-student" placeholder="Enter Name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Parent Name</label>
-                    <input type="text" id="ctrl-parent" placeholder="Enter Parent Name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500" oninput="syncFields()">
+                    <input type="text" id="ctrl-parent" placeholder="Enter Parent Name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Class</label>
@@ -111,7 +111,7 @@
             <div class="p-4 flex flex-col items-center border-b-2 border-black">
                 <!-- Logo -->
                 <div class="w-24 h-24 mb-2 flex items-center justify-center overflow-hidden">
-                   <img src="C:\Users\KRAZY KIDS-08\OneDrive\Desktop\GPLR School\Operations\School Decor\School Logo\Final Logo - W Bacground.png" alt="School Logo" class="w-full h-full object-contain" onerror="this.style.display='none'">
+                   <img src="C:\Users\KRAZY KIDS-08\OneDrive\Desktop\GPLR School\Operations\School Decor\School Logo\Final Logo - W Bacground.png" alt="School Logo" class="w-full h-full object-cover">
                 </div>
                 <h1 class="text-3xl font-bold uppercase tracking-wider text-center">Gaya Prasad Lokai Ram School</h1>
                 <p class="text-sm">Shahpur Itai, Uraula, Balrampur - 271609</p>
@@ -136,7 +136,8 @@
                 <div class="col-span-1 border-r border-black p-1">No</div>
                 <div class="col-span-1 border-r border-black p-1">Due For</div>
                 <div class="col-span-2 border-r border-black p-1">Installment</div>
-                <div class="col-span-6 border-r border-black p-1">Particulars</div>
+                <div class="col-span-4 border-r border-black p-1">Particulars</div>
+                <div class="col-span-2 border-r border-black p-1">Transport</div>
                 <div class="col-span-2 p-1">Amount</div>
             </div>
 
@@ -147,11 +148,11 @@
 
             <!-- Footer / Total -->
             <div class="grid grid-cols-12 border-t-2 border-black font-bold">
-                <div class="col-span-9 p-2 border-r border-black flex gap-2">
+                <div class="col-span-8 p-2 border-r border-black flex gap-2">
                     <span>Rupees in words:</span>
                     <span id="view-words" class="capitalize font-normal">Fifteen Hundred Rupee only</span>
                 </div>
-                <div class="col-span-1 p-2 border-r border-black text-center">Total</div>
+                <div class="col-span-2 p-2 border-r border-black text-center">Total</div>
                 <div class="col-span-2 p-2 text-right px-4" id="view-total">1500</div>
             </div>
 
@@ -190,9 +191,9 @@
 
     <script>
         let feeItems = [
-            { id: 1, month: 'NOV', particular: 'Tution Fee', amount: 500 },
-            { id: 2, month: 'DEC', particular: 'Tution Fee', amount: 500 },
-            { id: 3, month: 'JAN', particular: 'Tution Fee', amount: 500 }
+            { id: 1, month: 'NOV', particular: 'Tution Fee', transport: 0, amount: 500 },
+            { id: 2, month: 'DEC', particular: 'Tution Fee', transport: 0, amount: 500 },
+            { id: 3, month: 'JAN', particular: 'Tution Fee', transport: 0, amount: 500 }
         ];
 
         let history = JSON.parse(localStorage.getItem('receipt_history')) || [];
@@ -222,6 +223,7 @@
                 id: Date.now(),
                 month: nextMonth,
                 particular: 'Tution Fee',
+                transport: 0,
                 amount: 0
             });
             renderFeeRows();
@@ -235,7 +237,7 @@
         function updateFee(id, field, value) {
             const item = feeItems.find(i => i.id === id);
             if (item) {
-                item[field] = field === 'amount' ? parseFloat(value) || 0 : value;
+                item[field] = (field === 'amount' || field === 'transport') ? parseFloat(value) || 0 : value;
                 renderFeeRows(false); // Don't re-render inputs to avoid focus loss
                 syncCalculations();
             }
@@ -252,6 +254,7 @@
                             ${months.map(m => `<option value="${m}" ${item.month === m ? 'selected' : ''}>${m}</option>`).join('')}
                         </select>
                         <input type="text" value="${item.particular}" oninput="updateFee(${item.id}, 'particular', this.value)" placeholder="Particulars" class="flex-grow p-1 border rounded text-sm">
+                        <input type="number" value="${item.transport}" oninput="updateFee(${item.id}, 'transport', this.value)" placeholder="Transport" class="w-20 p-1 border rounded text-sm">
                         <input type="number" value="${item.amount}" oninput="updateFee(${item.id}, 'amount', this.value)" placeholder="Amt" class="w-20 p-1 border rounded text-sm">
                         <button onclick="removeFeeRow(${item.id})" class="text-red-500 font-bold px-2">×</button>
                     </div>
@@ -263,7 +266,8 @@
                     <div class="col-span-1 border-r border-black p-1">${index + 1}</div>
                     <div class="col-span-1 border-r border-black p-1"></div>
                     <div class="col-span-2 border-r border-black p-1 font-semibold">${item.month}</div>
-                    <div class="col-span-6 border-r border-black p-1 text-left px-4">${item.particular}</div>
+                    <div class="col-span-4 border-r border-black p-1 text-left px-4">${item.particular}</div>
+                    <div class="col-span-2 border-r border-black p-1 text-right px-4 font-semibold">${item.transport}</div>
                     <div class="col-span-2 p-1 text-right px-4 font-semibold">${item.amount}</div>
                 </div>
             `).join('');
@@ -276,7 +280,8 @@
                         <div class="col-span-1 border-r border-black"></div>
                         <div class="col-span-1 border-r border-black"></div>
                         <div class="col-span-2 border-r border-black"></div>
-                        <div class="col-span-6 border-r border-black"></div>
+                        <div class="col-span-4 border-r border-black"></div>
+                        <div class="col-span-2 border-r border-black"></div>
                         <div class="col-span-2"></div>
                     </div>
                 `;
@@ -292,7 +297,7 @@
         }
 
         function syncCalculations() {
-            const total = feeItems.reduce((sum, item) => sum + item.amount, 0);
+            const total = feeItems.reduce((sum, item) => sum + item.amount + item.transport, 0);
             document.getElementById('view-total').innerText = total;
             document.getElementById('view-words').innerText = numberToWords(total) + " Rupee only";
         }
@@ -376,7 +381,7 @@
             csvContent += "Date,Student Name,Parent Name,Class,Total Amount,Particulars\n";
 
             history.forEach(rec => {
-                const particulars = rec.items.map(i => `${i.month}:${i.particular}(${i.amount})`).join(' | ');
+                const particulars = rec.items.map(i => `${i.month}:${i.particular}(Tuition:${i.amount},Transport:${i.transport})`).join(' | ');
                 const row = [
                     rec.date,
                     `"${rec.student}"`,
