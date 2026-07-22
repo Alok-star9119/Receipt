@@ -61,7 +61,7 @@
                 <h2 class="text-xl font-bold text-gray-800">Receipt Controls</h2>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Student Name</label>
                     <input type="text" id="ctrl-student" placeholder="Enter Name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
@@ -87,6 +87,10 @@
                         <option value="9th">9th</option>
                         <option value="10th">10th</option>
                     </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Receipt Date</label>
+                    <input type="date" id="ctrl-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
 
@@ -201,13 +205,32 @@
 
         const months = ['APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', 'JAN', 'FEB', 'MAR'];
 
+        function formatDateToInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDateForDisplay(dateStr) {
+            const date = new Date(dateStr);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+
         function init() {
-            // Set current date
+            // Set current date as default
             const today = new Date();
-            const dateStr = today.getDate().toString().padStart(2, '0') + '-' + 
-                            (today.getMonth() + 1).toString().padStart(2, '0') + '-' + 
-                            today.getFullYear();
-            document.getElementById('view-date').innerText = dateStr;
+            const dateInputValue = formatDateToInput(today);
+            document.getElementById('ctrl-date').value = dateInputValue;
+            document.getElementById('view-date').innerText = formatDateForDisplay(dateInputValue);
+            
+            // Set up date change listener
+            document.getElementById('ctrl-date').addEventListener('change', function() {
+                document.getElementById('view-date').innerText = formatDateForDisplay(this.value);
+            });
             
             // Populate controls
             document.getElementById('ctrl-student').value = "Abhi Mishra";
