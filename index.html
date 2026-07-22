@@ -48,6 +48,33 @@
             outline: none;
             border-bottom: 1px solid #000;
         }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -106,6 +133,7 @@
                 <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">Print Receipt</button>
                 <button onclick="saveToHistory()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition">Save & Issue</button>
                 <button onclick="clearForm()" class="bg-red-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700 transition">Clear Form</button>
+                <button onclick="importCSVModal()" class="bg-purple-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-700 transition">Import History CSV</button>
                 <button onclick="exportToExcel()" class="bg-gray-800 text-white px-6 py-2 rounded-lg font-bold hover:bg-gray-900 transition">Export History to Excel</button>
             </div>
         </div>
@@ -198,6 +226,36 @@
         </div>
     </div>
 
+    <!-- Import CSV Modal -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Import Historical Receipts</h2>
+            <p class="text-gray-700 mb-4">Upload your CSV file with transaction history. The system will merge it with existing receipts.</p>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Select CSV File</label>
+                <input type="file" id="csvFile" accept=".csv" class="block w-full p-2 border border-gray-300 rounded-md">
+            </div>
+            
+            <div class="mb-4 p-4 bg-blue-50 rounded-md border border-blue-200">
+                <h3 class="font-semibold text-blue-900 mb-2">CSV Format Required:</h3>
+                <p class="text-sm text-blue-800 mb-2">Your CSV should have these columns:</p>
+                <code class="text-xs bg-white p-2 block border border-blue-200 rounded mb-2">
+                    Date,Student Name,Parent Name,Class,Tuition Fee,Transport Fee,T-Shirt Fee,Renewal Fee
+                </code>
+                <p class="text-sm text-blue-800">Example:</p>
+                <code class="text-xs bg-white p-2 block border border-blue-200 rounded">
+                    21-01-2026,Abhi Mishra,Ashish Mishra,1st,500,50,100,0
+                </code>
+            </div>
+            
+            <div class="flex gap-3">
+                <button onclick="importCSV()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700">Import</button>
+                <button onclick="closeImportModal()" class="bg-gray-400 text-white px-6 py-2 rounded-lg font-bold hover:bg-gray-500">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let feeItems = [
             { id: 1, month: 'NOV', particular: 'Tution Fee', transport: 0, tshirt: 0, renewal: 0, amount: 500 },
@@ -268,7 +326,7 @@
             const item = feeItems.find(i => i.id === id);
             if (item) {
                 item[field] = (field === 'amount' || field === 'transport' || field === 'tshirt' || field === 'renewal') ? parseFloat(value) || 0 : value;
-                renderFeeRows(false); // Don't re-render inputs to avoid focus loss
+                renderFeeRows(false);
                 syncCalculations();
             }
         }
@@ -355,7 +413,6 @@
         }
 
         function saveToHistory() {
-            // Create a deep copy of the current fee items to save permanently
             const savedItems = JSON.parse(JSON.stringify(feeItems));
             
             const record = {
@@ -366,7 +423,7 @@
                 parent: document.getElementById('ctrl-parent').value,
                 class: document.getElementById('ctrl-class').value,
                 total: document.getElementById('view-total').innerText,
-                items: savedItems // Store a permanent copy of items
+                items: savedItems
             };
             
             history.unshift(record);
@@ -399,11 +456,9 @@
                 document.getElementById('ctrl-student').value = rec.student;
                 document.getElementById('ctrl-parent').value = rec.parent;
                 document.getElementById('ctrl-class').value = rec.class;
-                // Load the saved items permanently
                 feeItems = JSON.parse(JSON.stringify(rec.items));
                 renderFeeRows();
                 syncFields();
-                // Display the saved date
                 document.getElementById('ctrl-date').value = rec.date.split('-').reverse().join('-');
                 document.getElementById('view-date').innerText = rec.date;
                 window.scrollTo({ top: 500, behavior: 'smooth' });
@@ -420,18 +475,15 @@
         }
 
         function clearForm() {
-            // Reset form to default values
             document.getElementById('ctrl-student').value = "";
             document.getElementById('ctrl-parent').value = "";
             document.getElementById('ctrl-class').value = "Nur";
             
-            // Reset date to today
             const today = new Date();
             const dateInputValue = formatDateToInput(today);
             document.getElementById('ctrl-date').value = dateInputValue;
             document.getElementById('view-date').innerText = formatDateForDisplay(dateInputValue);
             
-            // Reset fee items
             feeItems = [
                 { id: 1, month: 'NOV', particular: 'Tution Fee', transport: 0, tshirt: 0, renewal: 0, amount: 500 },
                 { id: 2, month: 'DEC', particular: 'Tution Fee', transport: 0, tshirt: 0, renewal: 0, amount: 500 },
@@ -442,20 +494,122 @@
             syncFields();
         }
 
+        function importCSVModal() {
+            document.getElementById('importModal').classList.add('show');
+        }
+
+        function closeImportModal() {
+            document.getElementById('importModal').classList.remove('show');
+            document.getElementById('csvFile').value = '';
+        }
+
+        function importCSV() {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a CSV file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csv = e.target.result;
+                    const lines = csv.split('\n').filter(line => line.trim());
+                    
+                    if (lines.length < 2) {
+                        alert('CSV file is empty or has no data');
+                        return;
+                    }
+
+                    // Parse header
+                    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                    const dateIdx = headers.indexOf('date');
+                    const studentIdx = headers.indexOf('student name');
+                    const parentIdx = headers.indexOf('parent name');
+                    const classIdx = headers.indexOf('class');
+                    const tuitionIdx = headers.indexOf('tuition fee');
+                    const transportIdx = headers.indexOf('transport fee');
+                    const tshirtIdx = headers.indexOf('t-shirt fee');
+                    const renewalIdx = headers.indexOf('renewal fee');
+
+                    if (dateIdx === -1 || studentIdx === -1 || parentIdx === -1 || classIdx === -1) {
+                        alert('CSV must contain: Date, Student Name, Parent Name, Class columns');
+                        return;
+                    }
+
+                    let importedCount = 0;
+                    const startCount = history.length;
+
+                    // Parse data rows
+                    for (let i = 1; i < lines.length; i++) {
+                        const values = lines[i].split(',').map(v => v.trim());
+                        
+                        if (!values[dateIdx]) continue;
+
+                        const date = values[dateIdx];
+                        const student = values[studentIdx];
+                        const parent = values[parentIdx];
+                        const cls = values[classIdx];
+                        const tuition = parseFloat(values[tuitionIdx]) || 0;
+                        const transport = parseFloat(values[transportIdx]) || 0;
+                        const tshirt = parseFloat(values[tshirtIdx]) || 0;
+                        const renewal = parseFloat(values[renewalIdx]) || 0;
+                        const total = tuition + transport + tshirt + renewal;
+
+                        if (!student || !parent) continue;
+
+                        const record = {
+                            id: Date.now() + i,
+                            receiptNumber: 'IMP-' + Date.now().toString().slice(-8) + '-' + i,
+                            date: date,
+                            student: student,
+                            parent: parent,
+                            class: cls,
+                            total: total.toString(),
+                            items: [{
+                                id: 1,
+                                month: 'IMPORTED',
+                                particular: 'Fee Payment',
+                                transport: transport,
+                                tshirt: tshirt,
+                                renewal: renewal,
+                                amount: tuition
+                            }]
+                        };
+
+                        history.push(record);
+                        importedCount++;
+                    }
+
+                    if (importedCount > 0) {
+                        localStorage.setItem('receipt_history', JSON.stringify(history));
+                        renderHistory();
+                        closeImportModal();
+                        alert(`Successfully imported ${importedCount} receipts!\nTotal receipts: ${history.length}`);
+                    } else {
+                        alert('No valid data found in CSV file');
+                    }
+                } catch (error) {
+                    alert('Error parsing CSV: ' + error.message);
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
         function exportToExcel() {
             if (history.length === 0) {
                 alert("No history to export.");
                 return;
             }
 
-            // Create a comprehensive CSV with proper table format
             let csvContent = "data:text/csv;charset=utf-8,SCHOOL RECEIPT HISTORY - TRANSACTION REPORT\n";
             csvContent += "Generated on: " + new Date().toLocaleString() + "\n\n";
             
-            // Summary table headers
             csvContent += "Receipt No,Date,Student Name,Parent Name,Class,Total Amount\n";
             
-            // Add summary data
             history.forEach(rec => {
                 const row = [
                     rec.receiptNumber,
@@ -468,7 +622,6 @@
                 csvContent += row + "\n";
             });
             
-            // Add detailed breakdown
             csvContent += "\n\nDETAILED TRANSACTION BREAKDOWN\n";
             csvContent += "Receipt No,Date,Student Name,Parent Name,Class,Month,Particulars,Tuition Fee,Transport Fee,T-Shirt Fee,Renewal Fee,Item Total\n";
             
@@ -493,7 +646,6 @@
                 });
             });
             
-            // Add summary totals
             const totalRevenue = history.reduce((sum, rec) => sum + parseFloat(rec.total), 0);
             csvContent += "\n\nSUMMARY\n";
             csvContent += "Total Receipts Issued," + history.length + "\n";
