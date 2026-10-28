@@ -14,7 +14,7 @@ export const Header: React.FC<HeaderProps> = ({ dbConnected, totalReceiptsCount 
         <div className="flex items-center gap-4">
           <img
             src={LOGO_URL}
-            alt="GPLR School Logo"
+            alt="Alok Mishra Public School Logo"
             className="w-14 h-14 md:w-16 md:h-16 rounded-full object-contain border-2 shadow-md bg-white/10 backdrop-blur-sm p-0.5"
             style={{ borderColor: '#B98418' }}
             onError={(e) => {
@@ -24,7 +24,7 @@ export const Header: React.FC<HeaderProps> = ({ dbConnected, totalReceiptsCount 
           <div>
             <div className="flex items-center gap-2">
               <h1 className="font-display text-xl md:text-2xl font-bold tracking-wide text-amber-100">
-                Gaya Prasad Lokai Ram School
+                Alok Mishra Public School
               </h1>
               <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30">
                 <Sparkles className="w-3 h-3" /> Managed Cloud Backend

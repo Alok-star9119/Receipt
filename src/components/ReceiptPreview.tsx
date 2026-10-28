@@ -45,14 +45,14 @@ export const ReceiptPreview: React.FC<ReceiptPreviewProps> = ({
       <div className="p-3 flex flex-col items-center border-b-2 border-slate-900 bg-slate-50/50">
         <img
           src={LOGO_URL}
-          alt="GPLR School Logo"
+          alt="Alok Mishra Public School Logo"
           className="w-14 h-14 md:w-16 md:h-16 object-contain mb-1 rounded-full border border-slate-300 p-0.5 shadow-xs"
           onError={(e) => {
             (e.target as HTMLElement).style.display = 'none';
           }}
         />
         <h1 className="font-display text-lg md:text-xl font-bold uppercase tracking-wider text-center text-slate-950">
-          Gaya Prasad Lokai Ram School
+          Alok Mishra Public School
         </h1>
         <p className="text-xs font-medium text-slate-700">
           Shahpur Itai, Utraula, Balrampur - 271609

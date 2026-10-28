@@ -23,7 +23,7 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, 
             </div>
             <div>
               <h2 className="font-display text-lg font-bold text-amber-100">
-                GPLR School Fee Ledger Privacy Policy
+                Alok Mishra Public School Fee Ledger Privacy Policy
               </h2>
               <p className="text-xs text-amber-200/70">
                 Official Data Protection &amp; Cloud Security Information
@@ -43,7 +43,7 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, 
           <div className="p-3.5 bg-indigo-50 border border-indigo-100 rounded-xl text-xs text-indigo-950 flex items-start gap-2.5">
             <Lock className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
             <p>
-              Gaya Prasad Lokai Ram School (Shahpur Itai, Utraula, Balrampur) is committed to safeguarding student fee records and guardian details with enterprise Google Cloud security standards.
+              Alok Mishra Public School (Shahpur Itai, Utraula, Balrampur) is committed to safeguarding student fee records and guardian details with enterprise Google Cloud security standards.
             </p>
           </div>
 
@@ -80,7 +80,7 @@ export const PrivacyPolicyModal: React.FC<PrivacyPolicyModalProps> = ({ isOpen, 
           <div>
             <h3 className="font-semibold text-slate-900 mb-1">4. Contact &amp; Grievances</h3>
             <p className="text-xs text-slate-600">
-              For privacy requests or record corrections, please visit the GPLR School Administrative Office at Shahpur Itai, Utraula, Balrampur - 271609 or contact authorized cashier <b>Jyoti Verma</b>.
+              For privacy requests or record corrections, please visit the Alok Mishra Public School Administrative Office at Shahpur Itai, Utraula, Balrampur - 271609 or contact authorized cashier <b>Jyoti Verma</b>.
             </p>
           </div>
         </div>

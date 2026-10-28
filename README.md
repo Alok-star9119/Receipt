@@ -1,6 +1,6 @@
-# 🧾 Gaya Prasad Lokai Ram School - Fee Receipt & Ledger System
+# 🧾 Alok Mishra Public School - Fee Receipt & Ledger System
 
-A modern, responsive web application designed for **Gaya Prasad Lokai Ram School (Shahpur Itai, Utraula, Balrampur)** to streamline student fee calculation, concession tracking, pending due management, real-time Cloud Firestore synchronization, and instant print-ready receipt generation.
+A modern, responsive web application designed for **Alok Mishra Public School (Shahpur Itai, Utraula, Balrampur)** to streamline student fee calculation, concession tracking, pending due management, real-time Cloud Firestore synchronization, and instant print-ready receipt generation.
 
 ---
 
@@ -56,3 +56,4 @@ Receipt-main/
 ├── package.json                    # Project metadata & npm dependencies
 ├── vite.config.ts                  # Vite build tool configuration
 └── README.md                       # Documentation
+```

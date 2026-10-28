@@ -2,7 +2,7 @@
   "entities": {
     "receipts": {
       "title": "Receipt",
-      "description": "Fee receipt records for GPLR School",
+      "description": "Fee receipt records for Alok Mishra Public School",
       "type": "object",
       "properties": {
         "receiptNo": { "type": "number", "description": "Sequential receipt number" },
